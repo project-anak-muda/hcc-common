@@ -1,0 +1,108 @@
+# ──────────────────────────────────────────────────────────────
+# Secrets & environment
+# ──────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.env
+secrets/
+*.pem
+*.key
+
+# ──────────────────────────────────────────────────────────────
+# Python
+# ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Test / type / lint caches
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ──────────────────────────────────────────────────────────────
+# Jupyter / notebooks
+# ──────────────────────────────────────────────────────────────
+*.ipynb
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# ──────────────────────────────────────────────────────────────
+# ML artifacts & data (kept out of git; live in object storage)
+# ──────────────────────────────────────────────────────────────
+*.pt
+*.onnx
+*.engine
+*.engine.*
+*.pth
+*.weights
+*.tflite
+runs/
+datasets/
+detections/
+data/
+model_repository/
+*.mp4
+*.avi
+*.mkv
+
+# ──────────────────────────────────────────────────────────────
+# Service data volumes (local docker bind mounts)
+# ──────────────────────────────────────────────────────────────
+.volumes/
+pgdata/
+miniodata/
+ollama_data/
+redisdata/
+
+# ──────────────────────────────────────────────────────────────
+# Editor / OS
+# ──────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ──────────────────────────────────────────────────────────────
+# Logs
+# ──────────────────────────────────────────────────────────────
+*.log
+logs/
