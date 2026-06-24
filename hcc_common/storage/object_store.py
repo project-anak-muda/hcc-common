@@ -10,16 +10,19 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 from botocore.client import Config as BotoConfig
 
-from hcc_common.db import utcnow
+from hcc_common.db import now_jakarta
 from hcc_common.config import get_settings
 
 
 log = logging.getLogger(__name__)
 
-def raw_frame_key(camera_name: str,) -> str:
-    ts = utcnow()
+def raw_frame_key(camera_name: str, ts: Optional[datetime] = None, prefix: str = "frames") -> str:
+    """Hourly-bucketed key in the raw-frames bucket. ``prefix`` separates event
+    frames ("frames") from audit snapshots ("snapshots")."""
+    if ts is None:
+        ts = now_jakarta()
     return (
-        f"raw/{camera_name}/{ts:%Y-%m-%d}/{ts:%H}/"
+        f"{prefix}/{camera_name}/{ts:%Y-%m-%d}/{ts:%H}/"
         f"{ts:%Y%m%dT%H%M%S}_{ts.microsecond:06d}.jpg"
     )
 

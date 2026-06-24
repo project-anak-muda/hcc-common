@@ -61,7 +61,13 @@ class DetectorSettings(_Base):
     conf_threshold: float = Field(0.25, alias="DETECTOR_CONF_THRESHOLD")
     iou_dedup: float = Field(0.8, alias="DETECTOR_IOU_DEDUP")
     heartbeat_interval_seconds: int = Field(30, alias="HEARTBEAT_INTERVAL_SECONDS")
-    raw_sample_fps: float = Field(1.0, alias="RAW_SAMPLE_FPS")
+    # Event-log policy: detections are debounced into one row per object
+    # *occurrence*. A raw frame is saved once when an event opens; an hourly
+    # snapshot is saved for background audit. No annotated images are stored
+    # (regenerated on demand from raw frame + bbox).
+    snapshot_interval_seconds: int = Field(3600, alias="SNAPSHOT_INTERVAL_SECONDS")
+    event_gap_seconds: float = Field(10.0, alias="EVENT_GAP_SECONDS")   # missing this long → event closes
+    event_assoc_iou: float = Field(0.2, alias="EVENT_ASSOC_IOU")        # same-event spatial match
     # Cap inference at N frames/sec per camera so many cameras sharing one GPU
     # cannot oversubscribe it. Frames between are still decoded (stream stays
     # fresh) but skipped for prediction. Raise for lower-latency, fewer cameras.
@@ -100,12 +106,16 @@ class Settings(_Base):
     tz: str = Field("Asia/Jakarta", alias="TZ")
     log_level: str = Field("INFO", alias="LOG_LEVEL")
 
-    db: DatabaseSettings = Field(default_factory=DatabaseSettings)
-    storage: StorageSettings = Field(default_factory=StorageSettings)
-    bus: BusSettings = Field(default_factory=BusSettings)
-    detector: DetectorSettings = Field(default_factory=DetectorSettings)
-    reviewer: ReviewerSettings = Field(default_factory=ReviewerSettings)
-    trainer: TrainerSettings = Field(default_factory=TrainerSettings)
+    # Namespaced aliases (HCC_CFG_*) so the generic field names db/storage/bus/...
+    # can't be hijacked by a stray same-named shell env var (e.g. `STORAGE`),
+    # which pydantic-settings would otherwise try to JSON-parse as the model.
+    # Each sub-config still self-loads its own real vars (POSTGRES_*, S3_*, ...).
+    db: DatabaseSettings = Field(default_factory=DatabaseSettings, alias="HCC_CFG_DB")
+    storage: StorageSettings = Field(default_factory=StorageSettings, alias="HCC_CFG_STORAGE")
+    bus: BusSettings = Field(default_factory=BusSettings, alias="HCC_CFG_BUS")
+    detector: DetectorSettings = Field(default_factory=DetectorSettings, alias="HCC_CFG_DETECTOR")
+    reviewer: ReviewerSettings = Field(default_factory=ReviewerSettings, alias="HCC_CFG_REVIEWER")
+    trainer: TrainerSettings = Field(default_factory=TrainerSettings, alias="HCC_CFG_TRAINER")
 
 @lru_cache
 def get_settings() -> Settings:

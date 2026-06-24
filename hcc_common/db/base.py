@@ -18,8 +18,17 @@ NAMING_CONVENTION = {
 class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=NAMING_CONVENTION)
 
-def utcnow() -> dt.datetime:
-    return dt.datetime.now(dt.timezone.utc)
+# Western Indonesian Time (WIB) — fixed UTC+7, no DST. Using a fixed offset
+# keeps this dependency-free (no tzdata required in minimal containers).
+JAKARTA_TZ = dt.timezone(dt.timedelta(hours=7), name="WIB")
+
+def now_jakarta() -> dt.datetime:
+    """Timezone-aware 'now' in Jakarta time (WIB, UTC+7).
+
+    Canonical source of wall-clock timestamps across the project so every
+    service records and displays the same local time.
+    """
+    return dt.datetime.now(JAKARTA_TZ)
 
 def ts_column(**kwargs):
     """Timezone-aware timestamp column helper."""
