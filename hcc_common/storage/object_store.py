@@ -53,6 +53,7 @@ class ObjectStore:
             "events": self._s.bucket_events,
             "datasets": self._s.bucket_datasets,
             "models": self._s.bucket_models,
+            "sample_videos": self._s.bucket_sample_videos,
         }
 
     def ensure_buckets(self) -> None:

@@ -19,6 +19,7 @@ class ModelStatus(str, enum.Enum):
     draft = "draft"
     training = "training"
     evaluating = "evaluating"
+    candidate = "candidate"   # trained + passed eval; awaiting human promotion to `ready`
     ready = "ready"
     failed = "failed"
     archived = "archived"
@@ -35,6 +36,7 @@ class TrainingStatus(str, enum.Enum):
     collecting = "collecting"
     training = "training"
     evaluating = "evaluating"
+    pending_review = "pending_review"   # candidate produced; awaiting human promote/reject
     success = "success"
     failed = "failed"
     cancelled = "cancelled"

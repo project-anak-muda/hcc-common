@@ -47,6 +47,7 @@ class StorageSettings(_Base):
     bucket_events: str = Field("events", alias="S3_BUCKET_EVENTS")
     bucket_datasets: str = Field("datasets", alias="S3_BUCKET_DATASETS")
     bucket_models: str = Field("models", alias="S3_BUCKET_MODELS")
+    bucket_sample_videos: str = Field("sample-videos", alias="S3_BUCKET_SAMPLE_VIDEOS")
     raw_retention_days: int = Field(7, alias="RAW_RETENTION_DAYS")
 
 class BusSettings(_Base):
