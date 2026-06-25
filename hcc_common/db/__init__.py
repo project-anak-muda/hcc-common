@@ -2,6 +2,7 @@ from .base import Base, ts_column, now_jakarta, JAKARTA_TZ
 from .session import get_engine, get_sessionmaker, session_scope
 from .models import (
     Camera,
+    CameraModel,
     Model,
     ModelStatus,
     Detection,
@@ -19,6 +20,7 @@ __all__ = [
     "get_sessionmaker",
     "session_scope",
     "Camera",
+    "CameraModel",
     "Model",
     "ModelStatus",
     "Detection",

@@ -77,6 +77,21 @@ class Model(Base):
         UniqueConstraint("name", "version", name="uq_models_name_version"),
     )
 
+class CameraModel(Base):
+    """Which model (exact version) a camera runs. One assignment per camera;
+    a camera with no row here is not processed by the detector."""
+    __tablename__ = "camera_models"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    camera_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cameras.id", ondelete="CASCADE"), unique=True, index=True
+    )
+    model_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("models.id", ondelete="RESTRICT"), index=True
+    )
+    created_at: Mapped[datetime] = ts_column(default=now_jakarta)
+    updated_at: Mapped[datetime] = ts_column(default=now_jakarta, onupdate=now_jakarta)
+
 class Detection(Base):
     __tablename__ = "detections"
 
