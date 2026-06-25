@@ -28,12 +28,21 @@ def decode_jpeg(data: bytes):
 
 
 def draw_boxes(frame, boxes: list[dict]):
-    """Annotate a copy of the frame with labelled boxes."""
+    """Annotate a copy of the frame with labelled boxes.
+
+    Each ``bbox`` is normalized YOLO ``[cx, cy, w, h]`` (0..1); it's de-normalized
+    against this frame's pixel size for drawing.
+    """
     import cv2
 
     out = frame.copy()
+    fh, fw = out.shape[:2]
     for b in boxes:
-        x1, y1, x2, y2 = (int(v) for v in b["bbox"])
+        cx, cy, bw, bh = (float(v) for v in b["bbox"])
+        x1 = int((cx - bw / 2) * fw)
+        y1 = int((cy - bh / 2) * fh)
+        x2 = int((cx + bw / 2) * fw)
+        y2 = int((cy + bh / 2) * fh)
         cv2.rectangle(out, (x1, y1), (x2, y2), (0, 255, 0), 2)
         conf = b.get("confidence")
         text = f"{b['label']} {conf:.2f}" if conf is not None else str(b["label"])

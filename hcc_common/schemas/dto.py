@@ -13,7 +13,9 @@ class DetectionEvent(BaseModel):
     model_id: Optional[str] = None
     label: str
     confidence: float
-    bbox: Optional[list[int]] = None
+    bbox: Optional[list[float]] = None        # normalized YOLO [cx,cy,w,h] in 0..1
+    frame_width: Optional[int] = None         # source frame size the bbox was normalized against
+    frame_height: Optional[int] = None
     raw_image_key: Optional[str] = None
     annotated_image_key: Optional[str] = None
     extra: dict = Field(default_factory=dict)

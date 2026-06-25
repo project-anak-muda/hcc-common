@@ -87,7 +87,11 @@ class Detection(Base):
     camera_name: Mapped[str] = mapped_column(String(128), index=True)
     label: Mapped[str] = mapped_column(String(128), index=True)
     confidence: Mapped[float] = mapped_column(Float)   # peak confidence over the occurrence
-    bbox: Mapped[Optional[list]] = mapped_column(JSONB)   # [x1,y1,x2,y2] at capture
+    bbox: Mapped[Optional[list]] = mapped_column(JSONB)   # normalized YOLO [cx,cy,w,h] in 0..1
+    # source frame size (pixels) the bbox was normalized against — lets any
+    # consumer reconstruct pixel coords without decoding the image.
+    frame_width: Mapped[Optional[int]] = mapped_column(Integer)
+    frame_height: Mapped[Optional[int]] = mapped_column(Integer)
     is_valid: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
     is_sample: Mapped[bool] = mapped_column(Boolean, default=False)  # reserved (unused)
     # event-log fields: one row per object occurrence (debounced). `time` is
