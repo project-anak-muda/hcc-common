@@ -51,6 +51,32 @@ def draw_boxes(frame, boxes: list[dict]):
     return out
 
 
+def blur_faces(frame, face_boxes: list) -> "object":
+    """Return a copy of ``frame`` with each face box Gaussian-blurred.
+
+    ``face_boxes`` are pixel ``[x1,y1,x2,y2]``. Kernel size scales with face
+    width so a large face stays unreadable (N-09 / NFR-23). Blur happens on a
+    copy; the caller's frame is never mutated (J-2).
+    """
+    import cv2
+
+    out = frame.copy()
+    fh, fw = out.shape[:2]
+    for box in face_boxes or []:
+        x1, y1, x2, y2 = (int(v) for v in box[:4])
+        x1, y1 = max(0, x1), max(0, y1)
+        x2, y2 = min(fw, x2), min(fh, y2)
+        if x2 - x1 < 2 or y2 - y1 < 2:
+            continue
+        roi = out[y1:y2, x1:x2]
+        w = x2 - x1
+        k = int(max(w * 0.7, 51))
+        if k % 2 == 0:
+            k += 1
+        out[y1:y2, x1:x2] = cv2.GaussianBlur(roi, (k, k), 0)
+    return out
+
+
 def regenerate_annotated(raw_bytes: bytes, boxes: list[dict], quality: int = 80) -> Optional[bytes]:
     """Rebuild a boxed JPEG from a raw frame's bytes + bbox list. Returns None
     if the raw frame can't be decoded."""

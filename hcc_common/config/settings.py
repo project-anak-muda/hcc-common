@@ -42,6 +42,7 @@ class StorageSettings(_Base):
     access_key: str = Field("hcc-minio", alias="S3_ACCESS_KEY")
     secret_key: str = Field("hcc-minio-secret", alias="S3_SECRET_KEY")
     use_ssl: bool = Field(False, alias="S3_USE_SSL")
+    verify_ssl: bool = Field(True, alias="S3_VERIFY_SSL")   # set false for self-signed S3/MinIO
 
     bucket_raw: str = Field("raw-frames", alias="S3_BUCKET_RAW")
     bucket_events: str = Field("events", alias="S3_BUCKET_EVENTS")

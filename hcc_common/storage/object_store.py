@@ -10,6 +10,12 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 from botocore.client import Config as BotoConfig
 
+try:  # silence self-signed S3 warning when S3_VERIFY_SSL=false
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+except Exception:
+    pass
+
 from hcc_common.db import now_jakarta
 from hcc_common.config import get_settings
 
@@ -43,7 +49,15 @@ class ObjectStore:
             aws_access_key_id=s.access_key,
             aws_secret_access_key=s.secret_key,
             use_ssl=s.use_ssl,
-            config=BotoConfig(signature_version="s3v4", s3={"addressing_style": "path"}),
+            verify=s.verify_ssl,
+            config=BotoConfig(
+                signature_version="s3v4",
+                s3={"addressing_style": "path"},
+                # boto3 >=1.36: default CRC checksum + aws-chunked streaming
+                # dikorup oleh sebagian S3-compat/proxy -> hanya saat wajib.
+                request_checksum_calculation="when_required",
+                response_checksum_validation="when_required",
+            ),
         )
 
     @property
